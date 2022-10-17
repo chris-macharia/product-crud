@@ -1,0 +1,1 @@
+The index of the project is a READ operation on the DB.
