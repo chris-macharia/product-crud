@@ -24,6 +24,11 @@ $laptops = $statement->fetchAll(PDO::FETCH_ASSOC);
   <div id="navbar">
     <h1>MAGIC STORES</h1>
   </div>
+  <div>
+    <a href="/magic-stores/create/create.php">
+      <button type="button" class="btn btn-success">Create</button>
+    </a>
+  </div>
 
   <div id="table-container">
     <table class="table table-striped">
@@ -47,7 +52,7 @@ $laptops = $statement->fetchAll(PDO::FETCH_ASSOC);
             <td> <?php echo $laptop['price'] ?></td>
             <td> <?php echo $laptop['create_date'] ?></td>
             <td>
-              <button type="button" class="btn btn-sm btn-success">EDIT</button>
+              <button type="button" class="btn btn-sm btn-primary">EDIT</button>
               <button type="button" class="btn btn-sm btn-danger">DELETE</button>
             </td>
 
