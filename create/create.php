@@ -23,12 +23,40 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") { //this if statement prevents errors
   }
 
   if (empty($errors)) {
+    //Image Uploading Section.
+    if (!is_dir('images')) { //on the very initial start, the program will make a dir known as images, where images will be stored.
+      mkdir('images');
+    }
+
+    $image = $_FILES['image'] ?? null; //this part of the code handels image uploads
+    $imagePath = ""; // to ensure no errors incase the image isn't provided.
+    if ($image && $image['tmp_name']) {  //part 2 of the logic ensures the file was actually uploaded.
+      $n = 0;
+      function randomString($n) //generates a random String
+      {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $randomString = '';
+
+        for ($i = 0; $i < $n; $i++) {
+          $index = rand(0, strlen($characters) - 1);
+          $randomString .= $characters[$index];
+        }
+
+        return $randomString;
+      }
+
+
+      $imagePath = 'images/' . randomString(8) . '/' . $image['name']; // creates a unique image path. 
+      mkdir(dirname($imagePath));  //makes directories subsequently if the image is uploaded
+      move_uploaded_file($image['tmp_name'], $imagePath); //moves the image file into a permanent location
+    }
+
     $statement = $pdo->prepare("INSERT INTO laptops (title, description, image, price, create_date)
     VALUES(:title, :description, :image, :price, :create_date)");
 
     $statement->bindValue(':title', $title);  //this method is secure as it prevent SQL injection.
     $statement->bindValue(':description', $description);
-    $statement->bindValue(':image', $image);
+    $statement->bindValue(':image', $imagePath);
     $statement->bindValue(':price', $price);
     $statement->bindValue(':create_date', $date);
     $statement->execute();
@@ -36,6 +64,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") { //this if statement prevents errors
     $title = ""; // this empty variables clear the form after WRITING into the DB
     $description = "";
     $price = "";
+    $image = "";
+
+    header('location:index.php'); //redirect user back to index page after creating a product
   }
 }
 
@@ -68,7 +99,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") { //this if statement prevents errors
   <?php endif; ?>
 
   <div>
-    <form id="formDiv" action="" method="post">
+    <form id="formDiv" action="" method="post" enctype="multipart/form-data">
+      <!-- the enctype is responsible for image handling -->
       <div class="mb-3">
         <label class="form-label">Product Image</label>
         <br>
