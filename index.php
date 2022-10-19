@@ -52,7 +52,7 @@ $laptops = $statement->fetchAll(PDO::FETCH_ASSOC);
             <td> <?php echo $laptop['price'] ?></td>
             <td> <?php echo $laptop['create_date'] ?></td>
             <td>
-              <a href="">
+              <a href="/magic-stores/update/update.php?id=<?php echo $laptop['id']?>">
                 <button type="button" class="btn btn-sm btn-primary">EDIT</button>
               </a>
               <form action="/magic-stores/delete/delete.php" method="POST" style="display:inline-block ;"> <!-- used this form because we were making changes in the database -->

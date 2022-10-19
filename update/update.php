@@ -4,9 +4,21 @@ $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 $errors = []; //This is to alert the user  to provide the required fields.
 
-$title = ""; // this empty variables hold user input incase they fill out the form incorrectly
-$description = "";
-$price = "";
+$id = $_GET['id'] ?? null;
+if (!$id) { //if there is no ID on the url, then redirect to the index page.
+  header('location: /magic-stores/index.php');
+  exit;
+}
+
+$statement = $pdo->prepare('SELECT * FROM laptops WHERE id = :id'); //selects all data from the table
+$statement->bindValue(':id', $id);
+$statement->execute();
+$product = $statement->fetch(PDO::FETCH_ASSOC);
+
+
+$title = $product['title']; // this empty variables autofill the form from records in the DB.
+$description = $product['description'];
+$price = $product['price'];
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") { //this if statement prevents errors of empty variables from the unfilled forms
   $title = $_POST['title'];
@@ -29,8 +41,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") { //this if statement prevents errors
     }
 
     $image = $_FILES['image'] ?? null; //this part of the code handels image uploads
-    $imagePath = ""; // to ensure no errors incase the image isn't provided.
+    $imagePath = $product['image']; // to ensure no errors incase the image isn't provided.
+
     if ($image && $image['tmp_name']) {  //part 2 of the logic ensures the file was actually uploaded.
+      
+      if($product['image']){
+        unlink($product['image']); //unlink basically removes that image.
+      }
+
       $n = 0;
       function randomString($n) //generates a random String
       {
@@ -51,14 +69,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") { //this if statement prevents errors
       move_uploaded_file($image['tmp_name'], $imagePath); //moves the image file into a permanent location
     }
 
-    $statement = $pdo->prepare("INSERT INTO laptops (title, description, image, price, create_date)
-    VALUES(:title, :description, :image, :price, :create_date)");
-
+    $statement = $pdo->prepare("UPDATE laptops SET title = :title, description = :description, 
+                                                   image = :image, price = :price WHERE id = :id");
     $statement->bindValue(':title', $title);  //this method is secure as it prevent SQL injection.
     $statement->bindValue(':description', $description);
     $statement->bindValue(':image', $imagePath);
     $statement->bindValue(':price', $price);
-    $statement->bindValue(':create_date', $date);
+    $statement->bindValue(':id', $id);
     $statement->execute();
 
     $title = ""; // this empty variables clear the form after WRITING into the DB
@@ -87,10 +104,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") { //this if statement prevents errors
 
 <body>
   <div id="navbar">
-    <h1>Create new record</h1>
+    <h1>Update product</h1>
+  </div>
+  
+  <div>
+    <a href="/magic-stores/index.php">
+      <button type="button" class="btn btn-info">BACK</button>
+    </a>
   </div>
 
-  <?php if (!empty($errors)) : ?> <!-- ERROR-BOX -->
+  <?php if (!empty($errors)) : ?>
+    <!-- ERROR-BOX -->
     <div class="alert alert-danger" role="alert">
       <?php foreach ($errors as $error) : ?>
         <div><?php echo $error; ?></div>
@@ -99,6 +123,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") { //this if statement prevents errors
   <?php endif; ?>
 
   <div>
+    <div>
+      <?php if ($product["image"]) : ?>
+        <img src="<?php echo $product["image"] ?>" alt=""> <!-- If the record has an image, it will be displayed here. -->
+      <?php endif; ?>
+    </div>
     <form id="formDiv" action="" method="post" enctype="multipart/form-data">
       <!-- the enctype is responsible for image handling -->
       <div class="mb-3">
@@ -106,6 +135,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") { //this if statement prevents errors
         <br>
         <input type="file" name="image">
       </div>
+
       <div class="mb-3">
         <label class="form-label">Product Title</label>
         <input type="text" class="form-control" name="title" value="<?php echo $title ?>">
