@@ -22,7 +22,7 @@ $laptops = $statement->fetchAll(PDO::FETCH_ASSOC);
 
 <body>
   <div id="navbar">
-    <h1>MAGIC STORES</h1>
+    <h1>Laptops</h1>
   </div>
   <div>
     <a href="/magic-stores/create/create.php">
@@ -44,16 +44,21 @@ $laptops = $statement->fetchAll(PDO::FETCH_ASSOC);
       </thead>
       <tbody>
         <?php foreach ($laptops as $i => $laptop) : ?>
-        <!-- iterates over the array of the selected data and displays them in the table -->
+          <!-- iterates over the array of the selected data and displays them in the table -->
           <tr>
             <th scope="row"><?php echo $i + 1 ?></th>
-            <td></td>
+            <td><img src="<?php echo $laptop['image'] ?>" alt=""></td><!-- output for the image -->
             <td> <?php echo $laptop['title'] ?></td>
             <td> <?php echo $laptop['price'] ?></td>
             <td> <?php echo $laptop['create_date'] ?></td>
             <td>
-              <button type="button" class="btn btn-sm btn-primary">EDIT</button>
-              <button type="button" class="btn btn-sm btn-danger">DELETE</button>
+              <a href="">
+                <button type="button" class="btn btn-sm btn-primary">EDIT</button>
+              </a>
+              <form action="/magic-stores/delete/delete.php" method="POST" style="display:inline-block ;"> <!-- used this form because we were making changes in the database -->
+                <input type="hidden" name="id" value="<?php echo $laptop['id']?>">
+                <button type="submit" class="btn btn-sm btn-danger">DELETE</button>
+              </form>
             </td>
 
           </tr>
