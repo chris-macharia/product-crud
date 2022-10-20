@@ -2,7 +2,14 @@
 $pdo = new PDO('mysql:host=localhost;port=3306;dbname=magic-stores', 'root', ''); // connecting to the DB
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-$statement = $pdo->prepare('SELECT * FROM laptops ORDER BY create_date DESC'); //fetching from a table in the DB
+$search = $_GET['search'] ?? " ";
+if ($search) { //if user does a search
+  $statement = $pdo->prepare('SELECT * FROM laptops WHERE title LIKE :title ORDER BY create_date DESC'); //fetching from a table in the DB 
+  $statement->bindValue(':title', "%$search%"); //%% important for MYSQL
+} else {
+  $statement = $pdo->prepare('SELECT * FROM laptops ORDER BY create_date DESC'); //fetching from a table in the DB
+}
+
 $statement->execute();
 $laptops = $statement->fetchAll(PDO::FETCH_ASSOC);
 
@@ -24,11 +31,24 @@ $laptops = $statement->fetchAll(PDO::FETCH_ASSOC);
   <div id="navbar">
     <h1>Laptops</h1>
   </div>
-  <div>
+
+  <div id="create-button">
     <a href="/magic-stores/create/create.php">
       <button type="button" class="btn btn-success">Create</button>
     </a>
   </div>
+
+  <form action="">
+    <div id="search-bar">
+      <div class="input-group mb-3">
+        <input type="text" class="form-control" placeholder="Search for product" 
+        name="search" value="<?php echo $search?>"
+        aria-label="Recipient's username" aria-describedby="button-addon2">
+        <button class="btn btn-dark" type="submit" id="button-addon2">Search</button>
+      </div>
+    </div>
+  </form>
+
 
   <div id="table-container">
     <table class="table table-striped">
@@ -52,11 +72,12 @@ $laptops = $statement->fetchAll(PDO::FETCH_ASSOC);
             <td> <?php echo $laptop['price'] ?></td>
             <td> <?php echo $laptop['create_date'] ?></td>
             <td>
-              <a href="/magic-stores/update/update.php?id=<?php echo $laptop['id']?>">
+              <a href="/magic-stores/update/update.php?id=<?php echo $laptop['id'] ?>">
                 <button type="button" class="btn btn-sm btn-primary">EDIT</button>
               </a>
-              <form action="/magic-stores/delete/delete.php" method="POST" style="display:inline-block ;"> <!-- used this form because we were making changes in the database -->
-                <input type="hidden" name="id" value="<?php echo $laptop['id']?>">
+              <form action="/magic-stores/delete/delete.php" method="POST" style="display:inline-block ;">
+                <!-- used this form because we were making changes in the database -->
+                <input type="hidden" name="id" value="<?php echo $laptop['id'] ?>">
                 <button type="submit" class="btn btn-sm btn-danger">DELETE</button>
               </form>
             </td>

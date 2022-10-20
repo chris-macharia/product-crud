@@ -6,8 +6,12 @@ body{
 }
 #table-container{
   background-color: rgba(121, 92, 160, 0.76);
-  margin: 1cm 0cm 1cm 0cm;
+  margin: 0cm 0cm 1cm 0cm;
 }
 .product-image{
   width: 2cm;
+}
+#search-bar{
+  margin-top: .5cm;
+  margin-bottom: 0.05cm;
 }
