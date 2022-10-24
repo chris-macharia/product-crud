@@ -9,8 +9,8 @@ class ProductController
 
   public static function index(Router $router)
   { //Router defines that the variable $router is an object of that class Router.
-    $products = $router->db->getProducts();
-    $router->renderView('laptops/index', ['products' => $products]);
+    $laptops = $router->db->getProducts();
+    $router->renderView('laptops/index', ['laptops' => $laptops]);
   }
 
   public static  function create()
@@ -18,7 +18,7 @@ class ProductController
     echo "create page";
   }
 
-  public static  function update()
+  public static  function update() 
   {
     echo "update page";
   }

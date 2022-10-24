@@ -7,7 +7,6 @@ class Router{
   public array $getRoute = [];
   public array $postRoute = [];
 
-
   public Database $db;
 
   public function __construct()
