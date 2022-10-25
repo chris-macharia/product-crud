@@ -1,4 +1,6 @@
-<?php if (!empty($errors)) : ?> <!-- ERROR-BOX -->
+<?php 
+
+if (!empty($errors)) : ?> <!-- ERROR-BOX -->
     <div class="alert alert-danger" role="alert">
       <?php foreach ($errors as $error) : ?>
         <div><?php echo $error; ?></div>

@@ -42,7 +42,7 @@ class Router{
   public function renderView($view, $params = []){ //will get the file belonging to views/DIR/FILE as the $view
 
     foreach($params as $key=>$value){
-      $$key = $value;
+      $$key = $value; //$$key creates a new variable known as $key
     }
 
     ob_start(); //start caching of the output. Saves the output in local buffer rather than sending it to the web-browser.
