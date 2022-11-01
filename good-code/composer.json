@@ -1,0 +1,16 @@
+{
+    "name": "admin/good-code",
+    "autoload": {
+        "psr-4": {
+            "Admin\\GoodCode\\": "src/",
+            "app\\":"./"
+        }
+    },
+    "authors": [
+        {
+            "name": "chris-macharia",
+            "email": "christophermaina003@gmail.com"
+        }
+    ],
+    "require": {}
+}
